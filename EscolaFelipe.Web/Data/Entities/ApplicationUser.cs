@@ -11,7 +11,7 @@ namespace EscolaFelipe.Web.Data.Entities
         public string FullName { get; set; }
 
 
-        [Display(Name = "Foto de Perfil")]
+        [Display(Name = "Profile photo")]
         public string PhotoProfileUrl { get; set; }
 
     }

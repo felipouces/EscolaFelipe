@@ -1,36 +1,38 @@
 ﻿using EscolaFelipe.Web.Data.Entities;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Reflection.Emit;
 
 namespace EscolaFelipe.Web.Data
 {
-    public class DataContext
+    // Herda de IdentityDbContext para suportar autenticação e roles
+    public class DataContext : IdentityDbContext<ApplicationUser>
     {
-
-        public EscolaWebContext(DbContextOptions<DataContext> options) : base(options) { }
+        public DataContext(DbContextOptions<DataContext> options) : base(options)
+        {
+        }
 
         public DbSet<Student> Students { get; set; }
         public DbSet<Discipline> Disciplines { get; set; }
-        public DbSet<Enrollment> Registration { get; set; }
+        public DbSet<Enrollment> Enrollments { get; set; }  // nome plural consistente
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
-            // Configuração das relações N:N (via Inscrições)
+            // N:N via Enrollment, SEM delete em cascata
             modelBuilder.Entity<Enrollment>()
-                .HasOne(i => i.Aluno)
-                .WithMany(a => a.Inscricoes)
-                .HasForeignKey(i => i.AlunoId)
+                .HasOne(e => e.Student)
+                .WithMany(s => s.Registrations)
+                .HasForeignKey(e => e.StudentId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Enrollment>()
-                .HasOne(i => i.Disciplina)
-                .WithMany(d => d.Inscricoes)
-                .HasForeignKey(i => i.DisciplinaId)
+                .HasOne(e => e.Discipline)
+                .WithMany(d => d.Registrations)
+                .HasForeignKey(e => e.DisciplineId)
                 .OnDelete(DeleteBehavior.Restrict);
         }
-
     }
 }

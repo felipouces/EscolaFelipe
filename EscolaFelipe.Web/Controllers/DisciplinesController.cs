@@ -1,0 +1,154 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
+using EscolaFelipe.Web.Data;
+using EscolaFelipe.Web.Data.Entities;
+
+namespace EscolaFelipe.Web.Controllers
+{
+    public class DisciplinesController : Controller 
+    {
+        private readonly DataContext _context; // Contexto do banco de dados
+
+        public DisciplinesController(DataContext context)
+        {
+            _context = context; // Injeção de dependência do contexto
+        }
+
+        // GET: Disciplines
+        public async Task<IActionResult> Index()
+        {
+            return View(await _context.Disciplines.ToListAsync());
+        }
+
+        // GET: Disciplines/Details/5
+        public async Task<IActionResult> Details(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound(); // Retorna 404 se o ID for nulo
+            }
+
+            var discipline = await _context.Disciplines // Busca a disciplina pelo ID
+                .FirstOrDefaultAsync(m => m.Id == id);
+            if (discipline == null)
+            {
+                return NotFound(); // Se não encontrar, retorna 404
+            }
+
+            return View(discipline); // Retorna a view com a disciplina encontrada
+        }
+
+        // GET: Disciplines/Create
+        public IActionResult Create() // Retorna a view para criar uma nova disciplina
+        {
+            return View();
+        }
+
+        // POST: Disciplines/Create
+        // To protect from overposting attacks, enable the specific properties you want to bind to.
+        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create([Bind("Id,Name")] Discipline discipline)
+        // Recebe os dados do formulário para criar uma nova disciplina
+        {
+            if (ModelState.IsValid)
+            {
+                _context.Add(discipline);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
+            return View(discipline);
+        }
+
+        // GET: Disciplines/Edit/5
+        public async Task<IActionResult> Edit(int? id) // Retorna a view para editar uma disciplina existente
+        {
+            if (id == null)
+            {
+                return NotFound(); // Retorna 404 se o ID for nulo
+            }
+
+            var discipline = await _context.Disciplines.FindAsync(id);
+            if (discipline == null)
+            {
+                return NotFound(); // Se não encontrar, retorna 404
+            }
+            return View(discipline);
+        }
+
+        // POST: Disciplines/Edit/5
+        // To protect from overposting attacks, enable the specific properties you want to bind to.
+        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name")] Discipline discipline)
+        {
+            if (id != discipline.Id)
+            {
+                return NotFound();
+            }
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    _context.Update(discipline);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!DisciplineExists(discipline.Id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+                return RedirectToAction(nameof(Index));
+            }
+            return View(discipline);
+        }
+
+        // GET: Disciplines/Delete/5
+        public async Task<IActionResult> Delete(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var discipline = await _context.Disciplines
+                .FirstOrDefaultAsync(m => m.Id == id);
+            if (discipline == null)
+            {
+                return NotFound();
+            }
+
+            return View(discipline);
+        }
+
+        // POST: Disciplines/Delete/5
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            var discipline = await _context.Disciplines.FindAsync(id);
+            _context.Disciplines.Remove(discipline);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
+
+        private bool DisciplineExists(int id)
+        {
+            return _context.Disciplines.Any(e => e.Id == id);
+        }
+    }
+}

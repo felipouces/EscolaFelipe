@@ -1,13 +1,17 @@
+using EscolaFelipe.Web.Data;
+using EscolaFelipe.Web.Data.Entities;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 
 namespace EscolaFelipe.Web
 {
@@ -23,7 +27,39 @@ namespace EscolaFelipe.Web
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+
+            services.AddDbContext<DataContext>(cfg =>
+            {
+                cfg.UseSqlServer(this.Configuration.GetConnectionString("DefaultConnection"));
+            });
+
+
+            // Identity (com ApplicationUser e roles)
+            services.AddIdentity<ApplicationUser, IdentityRole>(cfg =>
+            {
+                cfg.User.RequireUniqueEmail = true;
+                cfg.Password.RequireDigit = false;
+                cfg.Password.RequiredLength = 6;
+                cfg.Password.RequireLowercase = false;
+                cfg.Password.RequiredUniqueChars = 0;
+                cfg.Password.RequireNonAlphanumeric = false;
+                cfg.Password.RequireUppercase = false;
+            })
+            .AddEntityFrameworkStores<DataContext>();
+            //.AddDefaultTokenProviders();
+            
+
+            // Configuração dos cookies de autenticação
+            services.ConfigureApplicationCookie(options =>
+            {
+                options.LoginPath = "/Account/NotAuthorized";     // página se não estiver autenticado
+                options.AccessDeniedPath = "/Account/NotAuthorized"; // página se não tiver permissão
+            });
+
+
+
             services.AddControllersWithViews();
+            services.AddRazorPages(); // Necessário para Identity UI
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -44,6 +80,8 @@ namespace EscolaFelipe.Web
 
             app.UseRouting();
 
+            // **IMPORTANTE: Authentication antes de Authorization**
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
