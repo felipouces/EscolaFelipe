@@ -1,9 +1,11 @@
 using EscolaFelipe.Web.Data;
 using EscolaFelipe.Web.Data.Entities;
+using EscolaFelipe.Web.Helpers;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -55,6 +57,9 @@ namespace EscolaFelipe.Web
                 options.LoginPath = "/Account/NotAuthorized";     // página se não estiver autenticado
                 options.AccessDeniedPath = "/Account/NotAuthorized"; // página se não tiver permissão
             });
+
+            // Injetar o serviço de envio de email (implementação fake por enquanto)
+            services.AddTransient<IEmailSender, EmailSender>();
 
 
 

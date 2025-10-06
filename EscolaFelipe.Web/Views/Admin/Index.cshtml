@@ -1,0 +1,47 @@
+﻿@model IEnumerable<EscolaFelipe.Web.Data.Entities.ApplicationUser>
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h2>Users</h2>
+
+@if (TempData["Message"] != null)
+{
+    <div class="alert alert-success">@TempData["Message"]</div>
+}
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+
+<p>
+    <a class="btn btn-primary" asp-action="CreateUser">Create New User</a>
+</p>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Full Name</th>
+            <th>Email</th>
+            <th>Roles</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var user in Model)
+        {
+            <tr>
+                <td>@user.FullName</td>
+                <td>@user.Email</td>
+                <td>
+                    <!-- Poderás mostrar roles aqui futuramente -->
+                </td>
+                <td>
+                    <form asp-action="DeleteUser" method="post" asp-route-id="@user.Id">
+                        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
