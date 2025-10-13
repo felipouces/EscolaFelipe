@@ -1,0 +1,31 @@
+﻿@model IEnumerable<EscolaFelipe.Web.Data.Entities.Enrollment>
+@{
+    ViewData["Title"] = "MyEnrollments";
+}
+
+<h2>MyEnrollments</h2>
+
+@if (!Model.Any())
+{
+    <p>You are not enrolled in any discipline yet.</p>
+}
+else
+{
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Discipline</th>
+                <th>Registration Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var e in Model)
+            {
+                <tr>
+                    <td>@e.Discipline.Name</td>
+                    <td>@e.RegistrationDate.ToShortDateString()</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

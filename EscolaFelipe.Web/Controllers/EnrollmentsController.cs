@@ -1,17 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using EscolaFelipe.Web.Data;
+using EscolaFelipe.Web.Data.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using EscolaFelipe.Web.Data;
-using EscolaFelipe.Web.Data.Entities;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace EscolaFelipe.Web.Controllers
 {
+
+    [Authorize(Roles = "Funcionario,Aluno")]
     public class EnrollmentsController : Controller
     {
+
         private readonly DataContext _context;
 
         public EnrollmentsController(DataContext context)
@@ -19,46 +23,45 @@ namespace EscolaFelipe.Web.Controllers
             _context = context;
         }
 
-        // GET: Enrollments
+        // ======================================================
+        // FUNCIONÁRIO: Gerir inscrições (CRUD normal)
+        // ======================================================
+        [Authorize(Roles = "Funcionario")]
         public async Task<IActionResult> Index()
         {
-            var dataContext = _context.Enrollments.Include(e => e.Discipline).Include(e => e.Student);
-            return View(await dataContext.ToListAsync());
+            var registrations = await _context.Enrollments
+                .Include(e => e.Student)
+                .Include(e => e.Discipline)
+                .ToListAsync();
+            return View(registrations);
         }
 
-        // GET: Enrollments/Details/5
+        [Authorize(Roles = "Funcionario")]
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
             var enrollment = await _context.Enrollments
-                .Include(e => e.Discipline)
                 .Include(e => e.Student)
+                .Include(e => e.Discipline)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (enrollment == null)
-            {
-                return NotFound();
-            }
+
+            if (enrollment == null) return NotFound();
 
             return View(enrollment);
         }
 
-        // GET: Enrollments/Create
+        [Authorize(Roles = "Funcionario")]
         public IActionResult Create()
         {
-            ViewData["DisciplineId"] = new SelectList(_context.Disciplines, "Id", "Name");
-            ViewData["StudentId"] = new SelectList(_context.Students, "Id", "Name");
+            ViewData["DisciplineId"] = new Microsoft.AspNetCore.Mvc.Rendering.SelectList(_context.Disciplines, "Id", "Name");
+            ViewData["StudentId"] = new Microsoft.AspNetCore.Mvc.Rendering.SelectList(_context.Students, "Id", "Name");
             return View();
         }
 
-        // POST: Enrollments/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Funcionario")]
         public async Task<IActionResult> Create([Bind("Id,StudentId,DisciplineId,RegistrationDate")] Enrollment enrollment)
         {
             if (ModelState.IsValid)
@@ -67,40 +70,31 @@ namespace EscolaFelipe.Web.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["DisciplineId"] = new SelectList(_context.Disciplines, "Id", "Name", enrollment.DisciplineId);
-            ViewData["StudentId"] = new SelectList(_context.Students, "Id", "Name", enrollment.StudentId);
+
+            ViewData["DisciplineId"] = new Microsoft.AspNetCore.Mvc.Rendering.SelectList(_context.Disciplines, "Id", "Name", enrollment.DisciplineId);
+            ViewData["StudentId"] = new Microsoft.AspNetCore.Mvc.Rendering.SelectList(_context.Students, "Id", "Name", enrollment.StudentId);
             return View(enrollment);
         }
 
-        // GET: Enrollments/Edit/5
+        [Authorize(Roles = "Funcionario")]
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
             var enrollment = await _context.Enrollments.FindAsync(id);
-            if (enrollment == null)
-            {
-                return NotFound();
-            }
-            ViewData["DisciplineId"] = new SelectList(_context.Disciplines, "Id", "Name", enrollment.DisciplineId);
-            ViewData["StudentId"] = new SelectList(_context.Students, "Id", "Name", enrollment.StudentId);
+            if (enrollment == null) return NotFound();
+
+            ViewData["DisciplineId"] = new Microsoft.AspNetCore.Mvc.Rendering.SelectList(_context.Disciplines, "Id", "Name", enrollment.DisciplineId);
+            ViewData["StudentId"] = new Microsoft.AspNetCore.Mvc.Rendering.SelectList(_context.Students, "Id", "Name", enrollment.StudentId);
             return View(enrollment);
         }
 
-        // POST: Enrollments/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Funcionario")]
         public async Task<IActionResult> Edit(int id, [Bind("Id,StudentId,DisciplineId,RegistrationDate")] Enrollment enrollment)
         {
-            if (id != enrollment.Id)
-            {
-                return NotFound();
-            }
+            if (id != enrollment.Id) return NotFound();
 
             if (ModelState.IsValid)
             {
@@ -111,56 +105,75 @@ namespace EscolaFelipe.Web.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!EnrollmentExists(enrollment.Id))
-                    {
+                    if (!_context.Enrollments.Any(e => e.Id == enrollment.Id))
                         return NotFound();
-                    }
                     else
-                    {
                         throw;
-                    }
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["DisciplineId"] = new SelectList(_context.Disciplines, "Id", "Name", enrollment.DisciplineId);
-            ViewData["StudentId"] = new SelectList(_context.Students, "Id", "Name", enrollment.StudentId);
+
+            ViewData["DisciplineId"] = new Microsoft.AspNetCore.Mvc.Rendering.SelectList(_context.Disciplines, "Id", "Name", enrollment.DisciplineId);
+            ViewData["StudentId"] = new Microsoft.AspNetCore.Mvc.Rendering.SelectList(_context.Students, "Id", "Name", enrollment.StudentId);
             return View(enrollment);
         }
 
-        // GET: Enrollments/Delete/5
+        [Authorize(Roles = "Funcionario")]
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
             var enrollment = await _context.Enrollments
-                .Include(e => e.Discipline)
                 .Include(e => e.Student)
+                .Include(e => e.Discipline)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (enrollment == null)
-            {
-                return NotFound();
-            }
+
+            if (enrollment == null) return NotFound();
 
             return View(enrollment);
         }
 
-        // POST: Enrollments/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Funcionario")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var enrollment = await _context.Enrollments.FindAsync(id);
-            _context.Enrollments.Remove(enrollment);
-            await _context.SaveChangesAsync();
+            if (enrollment != null)
+            {
+                _context.Enrollments.Remove(enrollment);
+                await _context.SaveChangesAsync();
+            }
+
             return RedirectToAction(nameof(Index));
         }
 
-        private bool EnrollmentExists(int id)
+        // ======================================================
+        // ALUNO: Ver as SUAS inscrições (N:N)
+        // ======================================================
+        [Authorize(Roles = "Aluno")]
+        public async Task<IActionResult> MyEnrollments()
         {
-            return _context.Enrollments.Any(e => e.Id == id);
+            var userEmail = User.Identity?.Name;
+
+            if (string.IsNullOrEmpty(userEmail))
+                return Unauthorized();
+
+            // Busca o aluno pelo e-mail (assumindo que Student.Email == ApplicationUser.Email)
+            var student = await _context.Students
+                .FirstOrDefaultAsync(s => s.Email == userEmail);
+
+            if (student == null)
+                return NotFound("Student not found for logged user.");
+
+            // Lista as inscrições do aluno
+            var enrollments = await _context.Enrollments
+                .Include(e => e.Discipline)
+                .Where(e => e.StudentId == student.Id)
+                .ToListAsync();
+
+            return View(enrollments);
         }
+
     }
 }
