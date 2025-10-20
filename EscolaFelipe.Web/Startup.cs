@@ -26,66 +26,69 @@ namespace EscolaFelipe.Web
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
+        // ======================================================
+        // 1? Serviços
+        // ======================================================
         public void ConfigureServices(IServiceCollection services)
         {
-
+            // Base de dados
             services.AddDbContext<DataContext>(cfg =>
             {
                 cfg.UseSqlServer(this.Configuration.GetConnectionString("DefaultConnection"));
             });
 
-
-            // Identity (com ApplicationUser e roles)
+            // Identity
             services.AddIdentity<ApplicationUser, IdentityRole>(cfg =>
             {
                 cfg.User.RequireUniqueEmail = true;
                 cfg.Password.RequireDigit = false;
                 cfg.Password.RequiredLength = 6;
                 cfg.Password.RequireLowercase = false;
-                cfg.Password.RequiredUniqueChars = 0;
-                cfg.Password.RequireNonAlphanumeric = false;
                 cfg.Password.RequireUppercase = false;
+                cfg.Password.RequireNonAlphanumeric = false;
             })
-            .AddEntityFrameworkStores<DataContext>();
-            //.AddDefaultTokenProviders();
-            
+            .AddEntityFrameworkStores<DataContext>()
+            .AddDefaultTokenProviders();
 
-            // Configuração dos cookies de autenticação
+            // Cookie config
             services.ConfigureApplicationCookie(options =>
             {
-                options.LoginPath = "/Account/NotAuthorized";     // página se não estiver autenticado
-                options.AccessDeniedPath = "/Account/NotAuthorized"; // página se não tiver permissão
+                options.LoginPath = "/Identity/Account/Login";
+                options.AccessDeniedPath = "/Account/NotAuthorized";
             });
 
             // Injetar o serviço de envio de email (implementação fake por enquanto)
             services.AddTransient<IEmailSender, EmailSender>();
 
 
-
+            // MVC + Razor
             services.AddControllersWithViews();
-            services.AddRazorPages(); // Necessário para Identity UI
+            services.AddRazorPages();
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+
+        // 2? Pipeline
+        
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
-                app.UseDeveloperExceptionPage();
+                app.UseDeveloperExceptionPage(); // Em dev, mostra erros técnicos
             }
             else
             {
-                app.UseExceptionHandler("/Home/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+                // Tratamento de erros personalizados
+                app.UseExceptionHandler("/Error/Error");
+                app.UseStatusCodePagesWithReExecute("/Error/{0}");
                 app.UseHsts();
             }
+
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
             app.UseRouting();
 
-            // **IMPORTANTE: Authentication antes de Authorization**
+            // Autenticação e Autorização
             app.UseAuthentication();
             app.UseAuthorization();
 
@@ -94,6 +97,7 @@ namespace EscolaFelipe.Web
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
+                endpoints.MapRazorPages(); // Necessário para Identity UI
             });
         }
     }
