@@ -1,13 +1,14 @@
 ﻿using EscolaFelipe.Web.Data.Entities;
+using EscolaFelipe.Web.Services;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using EscolaFelipe.Web.Services;
-
-
 
 namespace EscolaFelipe.Web.Controllers
 {
@@ -16,16 +17,19 @@ namespace EscolaFelipe.Web.Controllers
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
-        private readonly IEmailSender _emailSender; // To send emails
+        private readonly IEmailSender _emailSender;
+        private readonly IWebHostEnvironment _env;
 
         public AdminController(
             UserManager<ApplicationUser> userManager,
             RoleManager<IdentityRole> roleManager,
-            IEmailSender emailSender)
+            IEmailSender emailSender,
+            IWebHostEnvironment env)
         {
             _userManager = userManager;
             _roleManager = roleManager;
             _emailSender = emailSender;
+            _env = env;
         }
 
         // List of existing users
@@ -44,16 +48,14 @@ namespace EscolaFelipe.Web.Controllers
 
         // User creation (POST)
         [HttpPost]
-        public async Task<IActionResult> CreateUser(string fullName, string email, string role)
+        public async Task<IActionResult> CreateUser(string fullName, string email, string role, IFormFile photo)
         {
-
             if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(role))
             {
                 ModelState.AddModelError("", "All fields are required.");
                 return View();
             }
 
-            // Check if role exists, if not, create it
             // Checks if the user already exists in the system
             var existingUser = await _userManager.FindByEmailAsync(email);
             if (existingUser != null)
@@ -62,36 +64,56 @@ namespace EscolaFelipe.Web.Controllers
                 return View();
             }
 
+            // Process photo upload (if provided)
+            string photoUrl = null;
+            if (photo != null && photo.Length > 0)
+            {
+                var uploadsPath = Path.Combine(_env.WebRootPath, "images/users");
+                if (!Directory.Exists(uploadsPath))
+                    Directory.CreateDirectory(uploadsPath);
+
+                var fileName = $"{Guid.NewGuid()}_{photo.FileName}";
+                var filePath = Path.Combine(uploadsPath, fileName);
+
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await photo.CopyToAsync(stream);
+                }
+
+                photoUrl = $"/images/users/{fileName}";
+            }
+
             // Create new user
             var user = new ApplicationUser
             {
                 UserName = email,
                 Email = email,
                 FullName = fullName,
+                PhotoProfileUrl = photoUrl,
                 EmailConfirmed = true
             };
 
             var tempPassword = Guid.NewGuid().ToString().Substring(0, 8) + "Aa!";
-            // temporary password
             var result = await _userManager.CreateAsync(user, tempPassword);
 
             if (result.Succeeded)
             {
-                // Adiciona role
+                // Add role (create if not exists)
                 if (!await _roleManager.RoleExistsAsync(role))
                     await _roleManager.CreateAsync(new IdentityRole(role));
 
                 await _userManager.AddToRoleAsync(user, role);
 
-                // Gera token e link de reset de password
+                // Generate reset password link
                 var token = await _userManager.GeneratePasswordResetTokenAsync(user);
                 var resetLink = Url.Action("ResetPassword", "Account",
                     new { userId = user.Id, token = token }, Request.Scheme);
 
-                // Envia email
+                // Send email
                 await _emailSender.SendEmailAsync(email,
                     "Ative sua conta - Escola Web",
-                    $"Olá {fullName},<br/>Foi criada uma conta para si na plataforma Escola Web.<br/>" +
+                    $"Olá {fullName},<br/>" +
+                    $"Foi criada uma conta para si na plataforma Escola Web.<br/>" +
                     $"Por favor, defina uma nova password clicando neste link:<br/>" +
                     $"<a href='{resetLink}'>Alterar password</a>");
 
@@ -103,7 +125,6 @@ namespace EscolaFelipe.Web.Controllers
                 ModelState.AddModelError("", error.Description);
 
             return View();
-
         }
 
         // Delete user
@@ -123,6 +144,5 @@ namespace EscolaFelipe.Web.Controllers
 
             return RedirectToAction(nameof(Index));
         }
-
     }
 }

@@ -8,6 +8,7 @@ namespace EscolaFelipe.Web.Data.Entities
 
         [Required]
         [MaxLength(100)]
+        [Display(Name = "Full Name")]
         public string FullName { get; set; }
 
 
