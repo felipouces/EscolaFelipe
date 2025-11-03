@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace EscolaFelipe.Web.Data.Entities
 {
@@ -7,14 +8,16 @@ namespace EscolaFelipe.Web.Data.Entities
 
         public int Id { get; set; }
 
+        [Display(Name = "Student")]
         public int StudentId { get; set; }
         public Student Student { get; set; }
 
+        [Display(Name = "Discipline")]
         public int DisciplineId { get; set; }
-
         public Discipline Discipline { get; set; }
 
-        public DateTime RegistrationDate { get; set; } = DateTime.Now;
+        [Display(Name = "Registration Date")]
+        public DateTime EnrollmentDate { get; set; } = DateTime.Now;
 
     }
 }

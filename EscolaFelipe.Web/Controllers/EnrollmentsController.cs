@@ -23,9 +23,7 @@ namespace EscolaFelipe.Web.Controllers
             _context = context;
         }
 
-        // ======================================================
         // FUNCIONÁRIO: Gerir inscrições (CRUD normal)
-        // ======================================================
         [Authorize(Roles = "Funcionario")]
         public async Task<IActionResult> Index()
         {

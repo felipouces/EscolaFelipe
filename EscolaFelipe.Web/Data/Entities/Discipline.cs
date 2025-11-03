@@ -14,7 +14,7 @@ namespace EscolaFelipe.Web.Data.Entities
 
 
         // Relação N:N via Inscricao
-        public ICollection<Enrollment> Registrations { get; set; }
+        public ICollection<Enrollment> Enrollments { get; set; }
 
     }
 }
