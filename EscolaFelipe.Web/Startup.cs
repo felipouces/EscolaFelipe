@@ -26,18 +26,16 @@ namespace EscolaFelipe.Web
 
         public IConfiguration Configuration { get; }
 
-        // ======================================================
+
         // 1? Serviços
-        // ======================================================
+
         public void ConfigureServices(IServiceCollection services)
         {
-            // Base de dados
             services.AddDbContext<DataContext>(cfg =>
             {
                 cfg.UseSqlServer(this.Configuration.GetConnectionString("DefaultConnection"));
             });
 
-            // Identity
             services.AddIdentity<ApplicationUser, IdentityRole>(cfg =>
             {
                 cfg.User.RequireUniqueEmail = true;
@@ -50,34 +48,31 @@ namespace EscolaFelipe.Web
             .AddEntityFrameworkStores<DataContext>()
             .AddDefaultTokenProviders();
 
-            // Cookie config
             services.ConfigureApplicationCookie(options =>
             {
                 options.LoginPath = "/Identity/Account/Login";
-                options.AccessDeniedPath = "/Account/NotAuthorized";
+                options.AccessDeniedPath = "/Home/AccessDenied";
             });
 
-            // Injetar o serviço de envio de email (implementação fake por enquanto)
             services.AddTransient<IEmailSender, EmailSender>();
+            services.AddTransient<SeedDb>(); // <-- Aqui
 
-
-            // MVC + Razor
             services.AddControllersWithViews();
             services.AddRazorPages();
         }
 
 
+
         // 2? Pipeline
-        
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IServiceProvider serviceProvider)
         {
             if (env.IsDevelopment())
             {
-                app.UseDeveloperExceptionPage(); // Em dev, mostra erros técnicos
+                app.UseDeveloperExceptionPage();
             }
             else
             {
-                // Tratamento de erros personalizados
                 app.UseExceptionHandler("/Error/Error");
                 app.UseStatusCodePagesWithReExecute("/Error/{0}");
                 app.UseHsts();
@@ -88,7 +83,6 @@ namespace EscolaFelipe.Web
 
             app.UseRouting();
 
-            // Autenticação e Autorização
             app.UseAuthentication();
             app.UseAuthorization();
 
@@ -97,8 +91,25 @@ namespace EscolaFelipe.Web
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
-                endpoints.MapRazorPages(); // Necessário para Identity UI
+                endpoints.MapRazorPages();
             });
+
+
+            // Executa o SeedDb automaticamente ao iniciar a aplicação
+
+            SeedDatabaseAsync(serviceProvider).Wait();
         }
+
+        private async Task SeedDatabaseAsync(IServiceProvider serviceProvider)
+        {
+            using (var scope = serviceProvider.CreateScope())
+            {
+                var seeder = scope.ServiceProvider.GetRequiredService<SeedDb>();
+                await seeder.SeedAsync();
+            }
+        }
+
+
+
     }
 }
