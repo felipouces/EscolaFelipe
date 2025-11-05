@@ -1,110 +1,73 @@
-﻿using EscolaFelipe.Web.Data.Entities;
+﻿using EscolaFelipe.Web.Models;  
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 
-namespace EscolaFelipe.Web.Data
+namespace EscolaFelipe.Web.Data  
 {
-    public class SeedDb
+    public static class SeedData
     {
-        private readonly DataContext _context;
-        private readonly UserManager<ApplicationUser> _userManager;
-        private readonly RoleManager<IdentityRole> _roleManager;
-
-        public SeedDb(
-            DataContext context,
-            UserManager<ApplicationUser> userManager,
-            RoleManager<IdentityRole> roleManager)
+        public static async Task Initialize(IServiceProvider serviceProvider)
         {
-            _context = context;
-            _userManager = userManager;
-            _roleManager = roleManager;
-        }
+            var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+            var userManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
 
-        public async Task SeedAsync()
-        {
-            await _context.Database.MigrateAsync();
+            string[] roleNames = { "Administrador", "Funcionario", "Aluno", "Anonimo" };
 
-            // Cria as roles se não existirem
-            await CheckRoleAsync("Admin");
-            await CheckRoleAsync("Funcionario");
-            await CheckRoleAsync("Aluno");
-
-            // Cria utilizadores
-            var admin = await CheckUserAsync("admin@escola.com", "Admin User", "Admin");
-            var func = await CheckUserAsync("func@escola.com", "Funcionario User", "Funcionario");
-            var aluno = await CheckUserAsync("aluno@escola.com", "Aluno Teste", "Aluno");
-
-            // Cria disciplinas iniciais
-            await CheckDisciplinesAsync();
-
-            // Cria aluno na tabela Students associado ao utilizador aluno
-            await CheckStudentAsync(aluno.Email, aluno.FullName);
-        }
-
-        private async Task CheckRoleAsync(string roleName)
-        {
-            if (!await _roleManager.RoleExistsAsync(roleName))
+            foreach (var roleName in roleNames)
             {
-                await _roleManager.CreateAsync(new IdentityRole { Name = roleName });
+                var roleExist = await roleManager.RoleExistsAsync(roleName);
+                if (!roleExist)
+                {
+                    await roleManager.CreateAsync(new IdentityRole(roleName));
+                }
             }
-        }
 
-        private async Task<ApplicationUser> CheckUserAsync(string email, string fullName, string role)
-        {
-            var user = await _userManager.FindByEmailAsync(email);
+            // Create admin user
+            var adminUser = new ApplicationUser
+            {
+                UserName = "admin@escola.pt",
+                Email = "admin@escola.pt",
+                Nome = "Administrador",
+                Morada = "Escola Principal",
+                DataNascimento = new DateTime(1980, 1, 1),
+                EmailConfirmed = true
+            };
+
+            string adminPassword = "Admin123!";
+            var user = await userManager.FindByEmailAsync(adminUser.Email);
+
             if (user == null)
             {
-                user = new ApplicationUser
+                var createPowerUser = await userManager.CreateAsync(adminUser, adminPassword);
+                if (createPowerUser.Succeeded)
                 {
-                    FullName = fullName,
-                    Email = email,
-                    UserName = email,
-                    EmailConfirmed = true
-                };
-
-                var result = await _userManager.CreateAsync(user, "Escola@123");
-                if (result != IdentityResult.Success)
-                {
-                    throw new InvalidOperationException($"Não foi possível criar o utilizador {email}: {string.Join(", ", result.Errors.Select(e => e.Description))}");
+                    await userManager.AddToRoleAsync(adminUser, "Administrador");
                 }
-
-                await _userManager.AddToRoleAsync(user, role);
             }
 
-            return user;
-        }
 
-        private async Task CheckDisciplinesAsync()
-        {
-            if (!_context.Disciplines.Any())
+            // Create funcionário user
+            var funcionarioUser = new ApplicationUser
             {
-                _context.Disciplines.AddRange(
-                    new Discipline { Name = "Matemática" },
-                    new Discipline { Name = "Português" },
-                    new Discipline { Name = "História" },
-                    new Discipline { Name = "Informática" }
-                );
+                UserName = "funcionario@escola.pt",
+                Email = "funcionario@escola.pt",
+                Nome = "Funcionário Teste",
+                Morada = "Escola Principal",
+                DataNascimento = new DateTime(1985, 1, 1),
+                EmailConfirmed = true
+            };
 
-                await _context.SaveChangesAsync();
-            }
-        }
+            string funcionarioPassword = "Funcionario123!";
+            var funcionario = await userManager.FindByEmailAsync(funcionarioUser.Email);
 
-        private async Task CheckStudentAsync(string email, string fullName)
-        {
-            if (!_context.Students.Any(s => s.Email == email))
+            if (funcionario == null)
             {
-                var student = new Student
+                var createFuncionario = await userManager.CreateAsync(funcionarioUser, funcionarioPassword);
+                if (createFuncionario.Succeeded)
                 {
-                    Name = fullName,
-                    Email = email,
-                    DateOfBirth = new DateTime(2000, 1, 1)
-                };
-
-                _context.Students.Add(student);
-                await _context.SaveChangesAsync();
+                    await userManager.AddToRoleAsync(funcionarioUser, "Funcionario");
+                }
             }
         }
     }
