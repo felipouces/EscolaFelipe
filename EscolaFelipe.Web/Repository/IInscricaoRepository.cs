@@ -13,5 +13,13 @@ namespace EscolaFelipe.Web.Repository
         Task DeleteAsync(int id);
         Task<bool> ExistsAsync(int id);
         Task<bool> AlunoInscritoEmDisciplinaAsync(int alunoId, int disciplinaId);
+
+
+        // Métodos para dashboard
+        Task<int> CountInscricoesByAlunoAsync(int alunoId);
+        Task<int> CountInscricoesAtivasByAlunoAsync(int alunoId);
+        Task<int> CountInscricoesConcluidasByAlunoAsync(int alunoId);
+        Task<decimal> GetTotalInvestidoByAlunoAsync(int alunoId);
+        Task<IEnumerable<Disciplina>> GetDisciplinasRecomendadasAsync(int alunoId);
     }
 }

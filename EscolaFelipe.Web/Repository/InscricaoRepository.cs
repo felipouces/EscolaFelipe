@@ -104,5 +104,52 @@ namespace EscolaFelipe.Web.Repository
             return await _context.Inscricoes
                 .AnyAsync(i => i.AlunoId == alunoId && i.DisciplinaId == disciplinaId && i.Estado == "Ativa");
         }
+
+
+        // NOVOS MÉTODOS PARA DASHBOARD
+        public async Task<int> CountInscricoesByAlunoAsync(int alunoId)
+        {
+            return await _context.Inscricoes
+                .CountAsync(i => i.AlunoId == alunoId);
+        }
+
+        public async Task<int> CountInscricoesAtivasByAlunoAsync(int alunoId)
+        {
+            return await _context.Inscricoes
+                .CountAsync(i => i.AlunoId == alunoId && i.Estado == "Ativa");
+        }
+
+        public async Task<int> CountInscricoesConcluidasByAlunoAsync(int alunoId)
+        {
+            return await _context.Inscricoes
+                .CountAsync(i => i.AlunoId == alunoId && i.Estado == "Concluída");
+        }
+
+        public async Task<decimal> GetTotalInvestidoByAlunoAsync(int alunoId)
+        {
+            return await _context.Inscricoes
+                .Where(i => i.AlunoId == alunoId)
+                .Join(_context.Disciplinas,
+                      inscricao => inscricao.DisciplinaId,
+                      disciplina => disciplina.DisciplinaId,
+                      (inscricao, disciplina) => disciplina.Preco)
+                .SumAsync();
+        }
+
+        public async Task<IEnumerable<Disciplina>> GetDisciplinasRecomendadasAsync(int alunoId)
+        {
+            // Disciplinas ativas que o aluno ainda não está inscrito
+            var disciplinasInscritas = await _context.Inscricoes
+                .Where(i => i.AlunoId == alunoId && i.Estado == "Ativa")
+                .Select(i => i.DisciplinaId)
+                .ToListAsync();
+
+            return await _context.Disciplinas
+                .Where(d => d.Ativo && !disciplinasInscritas.Contains(d.DisciplinaId))
+                .OrderByDescending(d => d.DuracaoHoras)
+                .Take(3)
+                .ToListAsync();
+        }
+
     }
 }

@@ -1,0 +1,257 @@
+﻿@model EscolaFelipe.Web.ViewModels.DashboardAlunoViewModel
+
+@{
+    ViewData["Title"] = "Dashboard - Área do Aluno";
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1 class="display-6">Dashboard do Aluno</h1>
+                <div class="text-end">
+                    <small class="text-muted">Bem-vindo, @Model.Aluno?.Nome</small>
+                    <br>
+                    <small class="text-muted">Membro desde: @Model.Aluno?.DataInscricao.ToString("dd/MM/yyyy")</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CARDS DE ESTATÍSTICAS -->
+    <div class="row mb-4">
+        <!-- Total de Inscrições -->
+        <div class="col-md-3 mb-3">
+            <div class="card text-white bg-primary">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h4 class="card-title">@Model.TotalInscricoes</h4>
+                            <p class="card-text">Total de Inscrições</p>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="fas fa-book fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Inscrições Ativas -->
+        <div class="col-md-3 mb-3">
+            <div class="card text-white bg-success">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h4 class="card-title">@Model.InscricoesAtivas</h4>
+                            <p class="card-text">Inscrições Ativas</p>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="fas fa-play-circle fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Inscrições Concluídas -->
+        <div class="col-md-3 mb-3">
+            <div class="card text-white bg-info">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h4 class="card-title">@Model.InscricoesConcluidas</h4>
+                            <p class="card-text">Concluídas</p>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="fas fa-check-circle fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Total Investido -->
+        <div class="col-md-3 mb-3">
+            <div class="card text-white bg-warning">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h4 class="card-title">@Model.TotalInvestido.ToString("C")</h4>
+                            <p class="card-text">Total Investido</p>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="fas fa-euro-sign fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- BARRAS DE PROGRESSO -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Progresso das Inscrições</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between mb-1">
+                            <span>Inscrições Ativas</span>
+                            <span>@Model.InscricoesAtivas (@Model.PercentualAtivo.ToString("F1")%)</span>
+                        </div>
+                        <div class="progress" style="height: 20px;">
+                            <div class="progress-bar bg-success" role="progressbar"
+                                 style="width: @Model.PercentualAtivo%;"
+                                 aria-valuenow="@Model.PercentualAtivo" aria-valuemin="0" aria-valuemax="100">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between mb-1">
+                            <span>Inscrições Concluídas</span>
+                            <span>@Model.InscricoesConcluidas (@Model.PercentualConcluido.ToString("F1")%)</span>
+                        </div>
+                        <div class="progress" style="height: 20px;">
+                            <div class="progress-bar bg-info" role="progressbar"
+                                 style="width: @Model.PercentualConcluido%;"
+                                 aria-valuenow="@Model.PercentualConcluido" aria-valuemin="0" aria-valuemax="100">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- QUICK ACTIONS -->
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Ações Rápidas</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a asp-controller="Perfil" asp-action="MinhasInscricoes" class="btn btn-outline-primary btn-lg">
+                            <i class="fas fa-list me-2"></i>Ver Todas as Minhas Inscrições
+                        </a>
+                        <a asp-controller="Disciplinas" asp-action="Index" class="btn btn-outline-success btn-lg">
+                            <i class="fas fa-search me-2"></i>Explorar Disciplinas
+                        </a>
+                        <a asp-controller="Perfil" asp-action="MeuPerfil" class="btn btn-outline-info btn-lg">
+                            <i class="fas fa-user-edit me-2"></i>Editar Meu Perfil
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- PRÓXIMAS INSCRIÇÕES -->
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0">Minhas Inscrições Ativas</h5>
+                    <span class="badge bg-primary">@Model.InscricoesAtivas ativas</span>
+                </div>
+                <div class="card-body">
+                    @if (Model.ProximasInscricoes.Any())
+                    {
+                        foreach (var inscricao in Model.ProximasInscricoes)
+                        {
+                            <div class="card mb-3">
+                                <div class="card-body">
+                                    <h6 class="card-title">@inscricao.Disciplina.Nome</h6>
+                                    <p class="card-text text-muted small">@inscricao.Disciplina.Descricao</p>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <small class="text-muted">
+                                            Inscrito em: @inscricao.DataInscricao.ToString("dd/MM/yyyy")
+                                        </small>
+                                        <span class="badge bg-success">@inscricao.Estado</span>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+
+                        @if (Model.InscricoesAtivas > 3)
+                        {
+                            <div class="text-center mt-3">
+                                <a asp-controller="Perfil" asp-action="MinhasInscricoes" class="btn btn-sm btn-outline-primary">
+                                    Ver Todas (@Model.InscricoesAtivas)
+                                </a>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="text-center text-muted py-3">
+                            <i class="fas fa-book-open fa-2x mb-2"></i>
+                            <p>Nenhuma inscrição ativa</p>
+                            <a asp-controller="Disciplinas" asp-action="Index" class="btn btn-primary">
+                                Explorar Disciplinas
+                            </a>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- DISCIPLINAS RECOMENDADAS -->
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Disciplinas Recomendadas</h5>
+                </div>
+                <div class="card-body">
+                    @if (Model.DisciplinasRecomendadas.Any())
+                    {
+                        foreach (var disciplina in Model.DisciplinasRecomendadas)
+                        {
+                            <div class="card mb-3">
+                                <div class="card-body">
+                                    <h6 class="card-title">@disciplina.Nome</h6>
+                                    <p class="card-text text-muted small">@disciplina.Descricao</p>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <small class="text-muted">
+                                                <i class="fas fa-clock me-1"></i>@disciplina.DuracaoHoras horas
+                                            </small>
+                                            <small class="text-muted ms-2">
+                                                <i class="fas fa-euro-sign me-1"></i>@disciplina.Preco.ToString("C")
+                                            </small>
+                                        </div>
+                                        <a asp-controller="Disciplinas" asp-action="Details" asp-route-id="@disciplina.DisciplinaId"
+                                           class="btn btn-sm btn-outline-primary">
+                                            Ver Detalhes
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="text-center text-muted py-3">
+                            <i class="fas fa-star fa-2x mb-2"></i>
+                            <p>Nenhuma recomendação disponível</p>
+                            <p class="small">Já está inscrito em todas as disciplinas disponíveis!</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <!-- Adicionar Font Awesome -->
+    <script src="https://kit.fontawesome.com/your-fontawesome-kit.js" crossorigin="anonymous"></script>
+
+    <script>
+        console.log("Dashboard do aluno carregado com sucesso!");
+    </script>
+}
+
