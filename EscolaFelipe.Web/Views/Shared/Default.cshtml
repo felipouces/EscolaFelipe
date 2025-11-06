@@ -1,0 +1,136 @@
+﻿@model IEnumerable<EscolaFelipe.Web.Models.Notificacao>
+
+<li class="nav-item dropdown">
+    <a class="nav-link dropdown-toggle text-light position-relative" href="#" role="button" data-bs-toggle="dropdown" id="notificationsDropdown">
+        <i class="fas fa-bell"></i>
+        @if (ViewBag.CountNaoLidas > 0)
+        {
+            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="notificationBadge">
+                @ViewBag.CountNaoLidas
+                <span class="visually-hidden">notificações não lidas</span>
+            </span>
+        }
+    </a>
+    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="notificationsDropdown" style="min-width: 300px; max-height: 400px; overflow-y: auto;">
+        <li class="dropdown-header">
+            <div class="d-flex justify-content-between align-items-center">
+                <span>Notificações</span>
+                @if (ViewBag.CountNaoLidas > 0)
+                {
+                    <button class="btn btn-sm btn-outline-secondary" onclick="marcarTodasComoLidas()">
+                        <small>Marcar todas como lidas</small>
+                    </button>
+                }
+            </div>
+        </li>
+
+        @if (Model.Any())
+        {
+            foreach (var notificacao in Model.Take(5))
+            {
+                <li>
+                    @{
+                        var url = string.IsNullOrEmpty(notificacao.UrlAction) ? "#" :
+                        Url.Action(notificacao.UrlAction, notificacao.UrlController);
+                    }
+                    <a class="dropdown-item notification-item @(notificacao.Lida ? "text-muted" : "")"
+                       href="@url"
+                       onclick="marcarComoLida(@notificacao.NotificacaoId)">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h6 class="mb-1">@notificacao.Titulo</h6>
+                            <small>@notificacao.DataCriacao.ToString("HH:mm")</small>
+                        </div>
+                        <p class="mb-1 small">@notificacao.Mensagem</p>
+                        @if (!notificacao.Lida)
+                        {
+                            <span class="badge bg-@notificacao.Tipo.ToLower()">Nova</span>
+                        }
+                    </a>
+                </li>
+            }
+
+            @if (ViewBag.CountNaoLidas > 5)
+            {
+                <li><hr class="dropdown-divider"></li>
+                <li>
+                    <a class="dropdown-item text-center" asp-controller="Notificacoes" asp-action="Index">
+                        Ver todas as notificações (@ViewBag.CountNaoLidas)
+                    </a>
+                </li>
+            }
+        }
+        else
+        {
+            <li class="dropdown-item text-center text-muted py-3">
+                <i class="fas fa-bell-slash fa-2x mb-2"></i>
+                <p class="mb-0">Sem notificações</p>
+            </li>
+        }
+    </ul>
+</li>
+
+<script>
+    function marcarComoLida(notificacaoId) {
+        fetch('@Url.Action("MarcarComoLida", "Notificacoes")/' + notificacaoId, {
+            method: 'POST',
+            headers: {
+                'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+            }
+        }).then(response => response.json())
+          .then(data => {
+              if (data.success) {
+                  const badge = document.getElementById('notificationBadge');
+                  if (badge) {
+                      badge.textContent = data.countNaoLidas;
+                      if (data.countNaoLidas === 0) {
+                          badge.remove();
+                      }
+                  }
+              }
+          });
+    }
+
+    function marcarTodasComoLidas() {
+        fetch('@Url.Action("MarcarTodasComoLidas", "Notificacoes")', {
+            method: 'POST',
+            headers: {
+                'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+            }
+        }).then(response => response.json())
+          .then(data => {
+              if (data.success) {
+                  const badge = document.getElementById('notificationBadge');
+                  if (badge) {
+                      badge.remove();
+                  }
+                  document.querySelectorAll('.notification-item').forEach(item => {
+                      item.classList.add('text-muted');
+                  });
+              }
+          });
+    }
+
+    // Atualizar notificações a cada 30 segundos
+    setInterval(() => {
+        fetch('@Url.Action("GetNotificacoesNaoLidas", "Notificacoes")')
+            .then(response => response.json())
+            .then(data => {
+                const badge = document.getElementById('notificationBadge');
+                if (data.countNaoLidas > 0) {
+                    if (badge) {
+                        badge.textContent = data.countNaoLidas;
+                    } else {
+                        // Criar badge se não existir
+                        const bell = document.querySelector('#notificationsDropdown');
+                        const newBadge = document.createElement('span');
+                        newBadge.id = 'notificationBadge';
+                        newBadge.className = 'position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger';
+                        newBadge.textContent = data.countNaoLidas;
+                        bell.appendChild(newBadge);
+                    }
+                } else if (badge) {
+                    badge.remove();
+                }
+            });
+    }, 30000);
+</script>

@@ -1,21 +1,22 @@
 ﻿/* Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
 for details on configuring this project to bundle and minify static web assets. */
 
-a.navbar-brand {
+/*a.navbar-brand {
   white-space: normal;
   text-align: center;
   word-break: break-all;
-}
+}*/
 
-/* Provide sufficient contrast against white background */
+/* Provide sufficient contrast against white background 
 a {
   color: #0366d6;
 }
 
+
 .btn-primary {
-  color: #fff;
-  background-color: #1b6ec2;
-  border-color: #1861ac;
+    color: #fff;
+    background-color: #1b6ec2;
+    border-color: #1861ac;
 }
 
 .nav-pills .nav-link.active, .nav-pills .show > .nav-link {
@@ -26,7 +27,7 @@ a {
 
 /* Sticky footer styles
 -------------------------------------------------- */
-html {
+/*html {
   font-size: 14px;
 }
 @media (min-width: 768px) {
@@ -53,19 +54,115 @@ button.accept-policy {
 
 /* Sticky footer styles
 -------------------------------------------------- */
-html {
+/*html {
   position: relative;
   min-height: 100%;
 }
 
 body {
-  /* Margin bottom by footer height */
+  /* Margin bottom by footer height 
   margin-bottom: 60px;
 }
+
 .footer {
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  white-space: nowrap;
-  line-height: 60px; /* Vertically center the text there */
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    white-space: nowrap;
+    line-height: 60px; /* Vertically center the text there 
+}*/
+
+
+/* Custom page header for pages with large headings
+    -------------------------------------------------- 
+
+body {
+    background-color: #0d1117;
+    color: #e6e6e6;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
 }
+
+a {
+    color: #00b4d8;
+    text-decoration: none;
+}
+
+    a:hover {
+        color: #90e0ef;
+    }
+
+.navbar {
+    background-color: #161b22 !important;
+}
+
+footer {
+    background-color: #161b22;
+    color: #aaa;
+    text-align: center;
+    padding: 1rem;
+}
+
+.card {
+    background-color: #161b22;
+    color: #e6e6e6;
+    border: 1px solid #30363d;
+}
+
+.btn-primary {
+    background-color: #00b4d8;
+    border-color: #00b4d8;
+}
+
+    .btn-primary:hover {
+        background-color: #0077b6;
+        border-color: #0077b6;
+    }*/
+
+
+
+
+body {
+    background-color: #eaf1f8; /* azul acinzentado leve */
+    color: #212529;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+a {
+    color: #005f99;
+    text-decoration: none;
+}
+
+    a:hover {
+        color: #0077b6;
+    }
+
+.navbar {
+    background-color: #0a2472 !important;
+}
+
+footer {
+    background-color: #0a2472;
+    color: white;
+    text-align: center;
+    padding: 1rem;
+}
+
+.card {
+    background-color: #ffffff;
+    border: 1px solid #d0d7de;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.btn-primary {
+    background-color: #0077b6;
+    border-color: #0077b6;
+}
+
+    .btn-primary:hover {
+        background-color: #0096c7;
+        border-color: #0096c7;
+    }
+
+

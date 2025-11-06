@@ -14,6 +14,7 @@ namespace EscolaFelipe.Web.Data
         public DbSet<Aluno> Alunos { get; set; }
         public DbSet<Disciplina> Disciplinas { get; set; }
         public DbSet<Inscricao> Inscricoes { get; set; }
+        public DbSet<Notificacao> Notificacoes { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -34,6 +35,11 @@ namespace EscolaFelipe.Web.Data
                 .HasOne(i => i.ApplicationUser)
                 .WithMany(u => u.Inscricoes)
                 .HasForeignKey(i => i.ApplicationUserId);
+
+            builder.Entity<Notificacao>()
+               .HasOne(n => n.Utilizador)
+               .WithMany()
+               .HasForeignKey(n => n.UtilizadorId);
         }
     }
 }

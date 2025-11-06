@@ -1,6 +1,7 @@
 using EscolaFelipe.Web.Data;
 using EscolaFelipe.Web.Models;
 using EscolaFelipe.Web.Repository;
+using EscolaFelipe.Web.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -24,6 +25,10 @@ builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
 builder.Services.AddScoped<IAlunoRepository, AlunoRepository>();
 builder.Services.AddScoped<IDisciplinaRepository, DisciplinaRepository>();
 builder.Services.AddScoped<IInscricaoRepository, InscricaoRepository>();
+
+// SERVIÇOS PARA NOTIFICAÇÕES
+builder.Services.AddScoped<INotificacaoRepository, NotificacaoRepository>();
+builder.Services.AddScoped<INotificacaoService, NotificacaoService>();
 
 builder.Services.AddControllersWithViews();
 
