@@ -1,0 +1,60 @@
+﻿@model EscolaFelipe.Web.Models.Inscricao
+
+@{
+    ViewData["Title"] = "Eliminar Inscrição";
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card">
+                <div class="card-header bg-danger text-white">
+                    <h1 class="card-title">Eliminar Inscrição</h1>
+                </div>
+                <div class="card-body">
+                    <h3 class="text-danger">Tem a certeza que deseja eliminar esta inscrição?</h3>
+                    <div class="alert alert-warning">
+                        <strong>Atenção:</strong> Esta ação não pode ser desfeita.
+                    </div>
+
+                    <dl class="row">
+                        <dt class="col-sm-3">Aluno:</dt>
+                        <dd class="col-sm-9">@Model.Aluno.Nome</dd>
+
+                        <dt class="col-sm-3">Disciplina:</dt>
+                        <dd class="col-sm-9">@Model.Disciplina.Nome</dd>
+
+                        <dt class="col-sm-3">Data de Inscrição:</dt>
+                        <dd class="col-sm-9">@Model.DataInscricao.ToString("dd/MM/yyyy")</dd>
+
+                        <dt class="col-sm-3">Estado:</dt>
+                        <dd class="col-sm-9">
+                            @if (Model.Estado == "Ativa")
+                            {
+                                <span class="badge bg-success">@Model.Estado</span>
+                            }
+                            else if (Model.Estado == "Concluída")
+                            {
+                                <span class="badge bg-primary">@Model.Estado</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-warning">@Model.Estado</span>
+                            }
+                        </dd>
+
+                        <dt class="col-sm-3">Registado por:</dt>
+                        <dd class="col-sm-9">@Model.ApplicationUser?.Nome</dd>
+                    </dl>
+
+                    <form asp-action="Delete">
+                        <input type="hidden" asp-for="InscricaoId" />
+                        <button type="submit" class="btn btn-danger">Eliminar Definitivamente</button>
+                        <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

@@ -1,0 +1,55 @@
+﻿@model EscolaFelipe.Web.Models.Disciplina
+
+@{
+    ViewData["Title"] = "Detalhes da Disciplina";
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card">
+                <div class="card-header @(!Model.Ativo ? "bg-warning" : "bg-primary text-white")">
+                    <h1 class="card-title">@Model.Nome</h1>
+                    @if (!Model.Ativo)
+                    {
+                        <span class="badge bg-dark">Disciplina Inativa</span>
+                    }
+                </div>
+                <div class="card-body">
+                    <dl class="row">
+                        <dt class="col-sm-3">Descrição:</dt>
+                        <dd class="col-sm-9">@Model.Descricao</dd>
+
+                        <dt class="col-sm-3">Duração:</dt>
+                        <dd class="col-sm-9">@Model.DuracaoHoras horas</dd>
+
+                        <dt class="col-sm-3">Preço:</dt>
+                        <dd class="col-sm-9">@Model.Preco.ToString("C")</dd>
+
+                        <dt class="col-sm-3">Estado:</dt>
+                        <dd class="col-sm-9">
+                            @if (Model.Ativo)
+                            {
+                                <span class="badge bg-success">Disponível</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-warning">Indisponível</span>
+                            }
+                        </dd>
+                    </dl>
+                </div>
+                <div class="card-footer">
+                    <a asp-action="Index" class="btn btn-secondary">Voltar à Lista</a>
+                    @if (User.IsInRole("Administrador"))
+                    {
+                        <a asp-action="Edit" asp-route-id="@Model.DisciplinaId" class="btn btn-warning">Editar</a>
+                        <a asp-action="Delete" asp-route-id="@Model.DisciplinaId" class="btn btn-danger">Eliminar</a>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+

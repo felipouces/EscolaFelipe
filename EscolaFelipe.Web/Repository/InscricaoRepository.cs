@@ -2,7 +2,7 @@
 using EscolaFelipe.Web.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace EscolaFelipeTeste.Repository
+namespace EscolaFelipe.Web.Repository
 {
     public class InscricaoRepository : IInscricaoRepository
     {

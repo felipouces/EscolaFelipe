@@ -1,0 +1,60 @@
+﻿@model EscolaFelipe.Web.Models.Inscricao
+
+@{
+    ViewData["Title"] = "Editar Inscrição";
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card">
+                <div class="card-header bg-warning text-dark">
+                    <h1 class="card-title">Editar Inscrição</h1>
+                </div>
+                <div class="card-body">
+                    <form asp-action="Edit">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <input type="hidden" asp-for="InscricaoId" />
+
+                        <div class="form-group mb-3">
+                            <label asp-for="AlunoId" class="form-label">Aluno</label>
+                            <select asp-for="AlunoId" class="form-control" asp-items="ViewBag.AlunoId">
+                                <option value="">-- Selecione o Aluno --</option>
+                            </select>
+                            <span asp-validation-for="AlunoId" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label asp-for="DisciplinaId" class="form-label">Disciplina</label>
+                            <select asp-for="DisciplinaId" class="form-control" asp-items="ViewBag.DisciplinaId">
+                                <option value="">-- Selecione a Disciplina --</option>
+                            </select>
+                            <span asp-validation-for="DisciplinaId" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label asp-for="Estado" class="form-label">Estado da Inscrição</label>
+                            <select asp-for="Estado" class="form-control">
+                                <option value="Ativa">Ativa</option>
+                                <option value="Concluída">Concluída</option>
+                                <option value="Cancelada">Cancelada</option>
+                            </select>
+                            <span asp-validation-for="Estado" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-warning">Atualizar Inscrição</button>
+                            <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

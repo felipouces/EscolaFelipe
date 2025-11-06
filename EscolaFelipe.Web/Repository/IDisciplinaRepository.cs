@@ -1,7 +1,7 @@
 ﻿using EscolaFelipe.Web.Models;
 
 
-namespace EscolaFelipeWeb.Repository
+namespace EscolaFelipe.Web.Repository
 {
     public interface IDisciplinaRepository
     {

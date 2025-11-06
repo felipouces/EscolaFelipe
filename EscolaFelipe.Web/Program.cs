@@ -1,8 +1,6 @@
 using EscolaFelipe.Web.Data;
 using EscolaFelipe.Web.Models;
 using EscolaFelipe.Web.Repository;
-using EscolaFelipeTeste.Repository;
-using EscolaFelipeWeb.Repository;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 

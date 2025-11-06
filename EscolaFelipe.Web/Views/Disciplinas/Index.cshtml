@@ -1,0 +1,79 @@
+﻿@model IEnumerable<EscolaFelipe.Web.Models.Disciplina>
+
+@{
+    ViewData["Title"] = "Disciplinas";
+}
+
+<h1>Disciplinas Disponíveis</h1>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        @TempData["SuccessMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        @TempData["ErrorMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+@if (User.IsInRole("Administrador"))
+{
+    <p>
+        <a asp-action="Create" class="btn btn-primary">Nova Disciplina</a>
+    </p>
+}
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">
+        <h4>Nenhuma disciplina encontrada</h4>
+        <p>Não existem disciplinas disponíveis no momento.</p>
+        @if (User.IsInRole("Administrador"))
+        {
+            <a asp-action="Create" class="btn btn-primary">Adicionar Primeira Disciplina</a>
+        }
+    </div>
+}
+else
+{
+    <div class="row">
+        @foreach (var item in Model)
+        {
+            <div class="col-md-4 mb-4">
+                <div class="card @(!item.Ativo ? "border-warning" : "")">
+                    <div class="card-header @(!item.Ativo ? "bg-warning" : "bg-primary text-white")">
+                        <h5 class="card-title mb-0">@item.Nome</h5>
+                        @if (!item.Ativo)
+                        {
+                            <span class="badge bg-dark">Inativa</span>
+                        }
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text">@item.Descricao</p>
+                        <ul class="list-unstyled">
+                            <li><strong>Duração:</strong> @item.DuracaoHoras horas</li>
+                            <li><strong>Preço:</strong> @item.Preco.ToString("C")</li>
+                        </ul>
+                    </div>
+                    <div class="card-footer">
+                        <div class="btn-group w-100" role="group">
+                            <a asp-action="Details" asp-route-id="@item.DisciplinaId" class="btn btn-info btn-sm">Detalhes</a>
+                            @if (User.IsInRole("Administrador"))
+                            {
+                                <a asp-action="Edit" asp-route-id="@item.DisciplinaId" class="btn btn-warning btn-sm">Editar</a>
+                                <a asp-action="Delete" asp-route-id="@item.DisciplinaId" class="btn btn-danger btn-sm">Eliminar</a>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+

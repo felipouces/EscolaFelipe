@@ -1,0 +1,65 @@
+﻿@model IEnumerable<EscolaFelipe.Web.Models.Inscricao>
+
+@{
+    ViewData["Title"] = "Minhas Inscrições";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        @TempData["SuccessMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        @TempData["ErrorMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">
+        <h4>Nenhuma inscrição encontrada</h4>
+        <p>Não tem inscrições ativas no momento.</p>
+        <a asp-controller="Disciplinas" asp-action="Index" class="btn btn-primary">Ver Disciplinas Disponíveis</a>
+    </div>
+}
+else
+{
+    <div class="row">
+        @foreach (var item in Model)
+        {
+            <div class="col-md-6 mb-4">
+                <div class="card @(item.Estado == "Ativa" ? "border-success" : item.Estado == "Concluída" ? "border-primary" : "border-warning")">
+                    <div class="card-header @(item.Estado == "Ativa" ? "bg-success text-white" : item.Estado == "Concluída" ? "bg-primary text-white" : "bg-warning text-dark")">
+                        <h5 class="card-title mb-0">@item.Disciplina.Nome</h5>
+                        <span class="badge @(item.Estado == "Ativa" ? "bg-light text-dark" : "bg-dark")">@item.Estado</span>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text">@item.Disciplina.Descricao</p>
+                        <ul class="list-unstyled">
+                            <li><strong>Duração:</strong> @item.Disciplina.DuracaoHoras horas</li>
+                            <li><strong>Data de Inscrição:</strong> @item.DataInscricao.ToString("dd/MM/yyyy")</li>
+                            <li><strong>Preço:</strong> @item.Disciplina.Preco.ToString("C")</li>
+                        </ul>
+                    </div>
+                    <div class="card-footer">
+                        <a asp-action="DetalhesInscricao" asp-route-id="@item.InscricaoId" class="btn btn-info btn-sm">Detalhes</a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+<div class="mt-3">
+    <a asp-action="MeuPerfil" class="btn btn-secondary">Voltar ao Perfil</a>
+    <a asp-controller="Disciplinas" asp-action="Index" class="btn btn-primary">Ver Mais Disciplinas</a>
+</div>
+

@@ -1,9 +1,9 @@
 ﻿using EscolaFelipe.Web.Data;
 using EscolaFelipe.Web.Models;
-using EscolaFelipeWeb.Repository;
+using EscolaFelipe.Web.Repository;
 using Microsoft.EntityFrameworkCore;
 
-namespace EscolaFelipeTeste.Repository
+namespace EscolaFelipe.Web.Repository
 {
     public class DisciplinaRepository : IDisciplinaRepository
     {

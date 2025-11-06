@@ -1,6 +1,6 @@
 ﻿using EscolaFelipe.Web.Models;
 
-namespace EscolaFelipeTeste.Repository
+namespace EscolaFelipe.Web.Repository
 {
     public interface IInscricaoRepository
     {

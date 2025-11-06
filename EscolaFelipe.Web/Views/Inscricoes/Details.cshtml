@@ -1,0 +1,79 @@
+﻿@model EscolaFelipe.Web.Models.Inscricao
+
+@{
+    ViewData["Title"] = "Detalhes da Inscrição";
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h1 class="card-title">Detalhes da Inscrição</h1>
+                </div>
+                <div class="card-body">
+                    @if (TempData["ErrorMessage"] != null)
+                    {
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            @TempData["ErrorMessage"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    }
+
+                    <dl class="row">
+                        <dt class="col-sm-3">Aluno:</dt>
+                        <dd class="col-sm-9">@Model.Aluno?.Nome</dd>
+
+                        <dt class="col-sm-3">Email do Aluno:</dt>
+                        <dd class="col-sm-9">@Model.Aluno?.Email</dd>
+
+                        <dt class="col-sm-3">Disciplina:</dt>
+                        <dd class="col-sm-9">@Model.Disciplina?.Nome</dd>
+
+                        <dt class="col-sm-3">Descrição da Disciplina:</dt>
+                        <dd class="col-sm-9">@Model.Disciplina?.Descricao</dd>
+
+                        <dt class="col-sm-3">Duração:</dt>
+                        <dd class="col-sm-9">@Model.Disciplina?.DuracaoHoras horas</dd>
+
+                        <dt class="col-sm-3">Preço:</dt>
+                        <dd class="col-sm-9">@Model.Disciplina?.Preco.ToString("C")</dd>
+
+                        <dt class="col-sm-3">Data de Inscrição:</dt>
+                        <dd class="col-sm-9">@Model.DataInscricao.ToString("dd/MM/yyyy")</dd>
+
+                        <dt class="col-sm-3">Estado:</dt>
+                        <dd class="col-sm-9">
+                            @if (Model.Estado == "Ativa")
+                            {
+                                <span class="badge bg-success">@Model.Estado</span>
+                            }
+                            else if (Model.Estado == "Concluída")
+                            {
+                                <span class="badge bg-primary">@Model.Estado</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-warning">@Model.Estado</span>
+                            }
+                        </dd>
+
+                        <dt class="col-sm-3">Registado por:</dt>
+                        <dd class="col-sm-9">@Model.ApplicationUser?.Nome</dd>
+
+                        <dt class="col-sm-3">Email do Funcionário:</dt>
+                        <dd class="col-sm-9">@Model.ApplicationUser?.Email</dd>
+                    </dl>
+                </div>
+                <div class="card-footer">
+                    <a asp-action="Index" class="btn btn-secondary">Voltar à Lista</a>
+                    @if (User.IsInRole("Administrador") || User.IsInRole("Funcionario"))
+                    {
+                        <a asp-action="Edit" asp-route-id="@Model.InscricaoId" class="btn btn-warning">Editar</a>
+                        <a asp-action="Delete" asp-route-id="@Model.InscricaoId" class="btn btn-danger">Eliminar</a>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

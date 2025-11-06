@@ -1,0 +1,47 @@
+﻿@model EscolaFelipe.Web.Models.Aluno
+
+@{
+    ViewData["Title"] = "Eliminar Aluno";
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card">
+                <div class="card-header bg-danger text-white">
+                    <h1 class="card-title">Eliminar Aluno</h1>
+                </div>
+                <div class="card-body">
+                    <h3 class="text-danger">Tem a certeza que deseja eliminar este aluno?</h3>
+                    <div class="alert alert-warning">
+                        <strong>Atenção:</strong> Esta ação não pode ser desfeita. Se o aluno tiver inscrições associadas, a eliminação poderá falhar.
+                    </div>
+
+                    <dl class="row">
+                        <dt class="col-sm-3">Nome:</dt>
+                        <dd class="col-sm-9">@Model.Nome</dd>
+
+                        <dt class="col-sm-3">Email:</dt>
+                        <dd class="col-sm-9">@Model.Email</dd>
+
+                        <dt class="col-sm-3">Data de Nascimento:</dt>
+                        <dd class="col-sm-9">@Model.DataNascimento.ToString("dd/MM/yyyy")</dd>
+
+                        <dt class="col-sm-3">Morada:</dt>
+                        <dd class="col-sm-9">@Model.Morada</dd>
+
+                        <dt class="col-sm-3">Data de Inscrição:</dt>
+                        <dd class="col-sm-9">@Model.DataInscricao.ToString("dd/MM/yyyy")</dd>
+                    </dl>
+
+                    <form asp-action="Delete">
+                        <input type="hidden" asp-for="AlunoId" />
+                        <button type="submit" class="btn btn-danger">Eliminar Definitivamente</button>
+                        <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

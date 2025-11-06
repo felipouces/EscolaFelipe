@@ -1,0 +1,57 @@
+﻿@model EscolaFelipe.Web.Models.Disciplina
+
+@{
+    ViewData["Title"] = "Eliminar Disciplina";
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card">
+                <div class="card-header bg-danger text-white">
+                    <h1 class="card-title">Eliminar Disciplina</h1>
+                </div>
+                <div class="card-body">
+                    <h3 class="text-danger">Tem a certeza que deseja eliminar esta disciplina?</h3>
+                    <div class="alert alert-warning">
+                        <strong>Atenção:</strong> Esta ação não pode ser desfeita. Se a disciplina tiver inscrições associadas, a eliminação poderá falhar.
+                    </div>
+
+                    <dl class="row">
+                        <dt class="col-sm-3">Nome:</dt>
+                        <dd class="col-sm-9">@Model.Nome</dd>
+
+                        <dt class="col-sm-3">Descrição:</dt>
+                        <dd class="col-sm-9">@Model.Descricao</dd>
+
+                        <dt class="col-sm-3">Duração:</dt>
+                        <dd class="col-sm-9">@Model.DuracaoHoras horas</dd>
+
+                        <dt class="col-sm-3">Preço:</dt>
+                        <dd class="col-sm-9">@Model.Preco.ToString("C")</dd>
+
+                        <dt class="col-sm-3">Estado:</dt>
+                        <dd class="col-sm-9">
+                            @if (Model.Ativo)
+                            {
+                                <span class="badge bg-success">Ativa</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-warning">Inativa</span>
+                            }
+                        </dd>
+                    </dl>
+
+                    <form asp-action="Delete">
+                        <input type="hidden" asp-for="DisciplinaId" />
+                        <button type="submit" class="btn btn-danger">Eliminar Definitivamente</button>
+                        <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+

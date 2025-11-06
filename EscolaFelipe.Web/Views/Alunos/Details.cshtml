@@ -1,0 +1,47 @@
+﻿@model EscolaFelipe.Web.Models.Aluno
+
+@{
+    ViewData["Title"] = "Detalhes do Aluno";
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    <h1 class="card-title">Detalhes do Aluno</h1>
+                </div>
+                <div class="card-body">
+                    <dl class="row">
+                        <dt class="col-sm-3">Nome:</dt>
+                        <dd class="col-sm-9">@Model.Nome</dd>
+
+                        <dt class="col-sm-3">Email:</dt>
+                        <dd class="col-sm-9">@Model.Email</dd>
+
+                        <dt class="col-sm-3">Data de Nascimento:</dt>
+                        <dd class="col-sm-9">@Model.DataNascimento.ToString("dd/MM/yyyy")</dd>
+
+                        <dt class="col-sm-3">Morada:</dt>
+                        <dd class="col-sm-9">@Model.Morada</dd>
+
+                        <dt class="col-sm-3">Telefone:</dt>
+                        <dd class="col-sm-9">@Model.Telefone</dd>
+
+                        <dt class="col-sm-3">Data de Inscrição:</dt>
+                        <dd class="col-sm-9">@Model.DataInscricao.ToString("dd/MM/yyyy")</dd>
+                    </dl>
+                </div>
+                <div class="card-footer">
+                    <a asp-action="Index" class="btn btn-secondary">Voltar à Lista</a>
+                    @if (User.IsInRole("Administrador") || User.IsInRole("Funcionario"))
+                    {
+                        <a asp-action="Edit" asp-route-id="@Model.AlunoId" class="btn btn-warning">Editar</a>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+

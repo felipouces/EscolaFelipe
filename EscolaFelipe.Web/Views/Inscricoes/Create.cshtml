@@ -1,0 +1,84 @@
+﻿@model EscolaFelipe.Web.ViewModels.InscricaoCreateViewModel
+
+@{
+    ViewData["Title"] = "Nova Inscrição";
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h1 class="card-title">Nova Inscrição</h1>
+                </div>
+                <div class="card-body">
+                    <!-- Exibir erros de validação de forma mais visível -->
+                    @if (!ViewData.ModelState.IsValid)
+                    {
+                        <div class="alert alert-danger">
+                            <h5>Erros de Validação:</h5>
+                            <ul>
+                                @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                                {
+                                    <li>@error.ErrorMessage</li>
+                                }
+                            </ul>
+                        </div>
+                    }
+
+                    <form asp-action="Create" id="inscricaoForm">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                        <div class="form-group mb-3">
+                            <label asp-for="AlunoId" class="form-label">Aluno *</label>
+                            <select asp-for="AlunoId" class="form-control" asp-items="ViewBag.AlunoId" required>
+                                <option value="">-- Selecione o Aluno --</option>
+                            </select>
+                            <span asp-validation-for="AlunoId" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label asp-for="DisciplinaId" class="form-label">Disciplina *</label>
+                            <select asp-for="DisciplinaId" class="form-control" asp-items="ViewBag.DisciplinaId" required>
+                                <option value="">-- Selecione a Disciplina --</option>
+                            </select>
+                            <span asp-validation-for="DisciplinaId" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label asp-for="Estado" class="form-label">Estado da Inscrição *</label>
+                            <select asp-for="Estado" class="form-control" required>
+                                <option value="Ativa">Ativa</option>
+                                <option value="Concluída">Concluída</option>
+                                <option value="Cancelada">Cancelada</option>
+                            </select>
+                            <span asp-validation-for="Estado" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-success" id="submitBtn">Criar Inscrição</button>
+                            <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+        console.log("Página de criação de inscrição carregada");
+
+        document.getElementById('inscricaoForm').addEventListener('submit', function(e) {
+            console.log('Formulário submetido');
+            console.log('AlunoId:', document.getElementById('AlunoId').value);
+            console.log('DisciplinaId:', document.getElementById('DisciplinaId').value);
+            console.log('Estado:', document.getElementById('Estado').value);
+        });
+    </script>
+}

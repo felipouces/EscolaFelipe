@@ -19,6 +19,10 @@ namespace EscolaFelipe.Web.Models
         [DataType(DataType.Date)]
         public DateTime DataNascimento { get; set; }
 
+        // Campo para armazenar o caminho da foto
+        [Display(Name = "Foto de Perfil")]
+        public string? FotoPerfil { get; set; }
+
         // Navigation properties - ATUALIZADO para Inscricoes
         public virtual ICollection<Inscricao> Inscricoes { get; set; } = new List<Inscricao>();
     }

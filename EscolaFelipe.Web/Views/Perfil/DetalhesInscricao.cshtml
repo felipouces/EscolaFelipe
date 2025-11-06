@@ -1,0 +1,55 @@
+﻿@model EscolaFelipe.Web.Models.Inscricao
+
+@{
+    ViewData["Title"] = "Detalhes da Inscrição";
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card">
+                <div class="card-header @(Model.Estado == "Ativa" ? "bg-success text-white" : Model.Estado == "Concluída" ? "bg-primary text-white" : "bg-warning text-dark")">
+                    <h1 class="card-title">Detalhes da Inscrição</h1>
+                </div>
+                <div class="card-body">
+                    <h4>@Model.Disciplina.Nome</h4>
+                    <hr />
+
+                    <dl class="row">
+                        <dt class="col-sm-4">Descrição:</dt>
+                        <dd class="col-sm-8">@Model.Disciplina.Descricao</dd>
+
+                        <dt class="col-sm-4">Duração:</dt>
+                        <dd class="col-sm-8">@Model.Disciplina.DuracaoHoras horas</dd>
+
+                        <dt class="col-sm-4">Preço:</dt>
+                        <dd class="col-sm-8">@Model.Disciplina.Preco.ToString("C")</dd>
+
+                        <dt class="col-sm-4">Data de Inscrição:</dt>
+                        <dd class="col-sm-8">@Model.DataInscricao.ToString("dd/MM/yyyy")</dd>
+
+                        <dt class="col-sm-4">Estado:</dt>
+                        <dd class="col-sm-8">
+                            @if (Model.Estado == "Ativa")
+                            {
+                                <span class="badge bg-success">@Model.Estado</span>
+                            }
+                            else if (Model.Estado == "Concluída")
+                            {
+                                <span class="badge bg-primary">@Model.Estado</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-warning">@Model.Estado</span>
+                            }
+                        </dd>
+                    </dl>
+                </div>
+                <div class="card-footer">
+                    <a asp-action="MinhasInscricoes" class="btn btn-secondary">Voltar à Lista</a>
+                    <a asp-controller="Disciplinas" asp-action="Details" asp-route-id="@Model.DisciplinaId" class="btn btn-info">Ver Disciplina</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
