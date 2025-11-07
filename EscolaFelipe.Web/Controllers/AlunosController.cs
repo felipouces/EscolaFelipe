@@ -65,7 +65,7 @@ namespace EscolaFelipeWeb.Controllers
         }
 
         // GET: Alunos/Create
-        [Authorize(Roles = "Administrador,Funcionario")]
+        [Authorize(Roles = "Administrador")]
         public IActionResult Create()
         {
             return View();
@@ -74,7 +74,7 @@ namespace EscolaFelipeWeb.Controllers
         // POST: Alunos/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Administrador,Funcionario")]
+        [Authorize(Roles = "Administrador")]
         public async Task<IActionResult> Create(Aluno aluno)
         {
             try
